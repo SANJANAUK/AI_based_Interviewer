@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -6,17 +6,37 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const interviews = [
-    { title: 'Frontend Developer', date: '2025-06-05', id: '123' },
-    { title: 'Backend Engineer', date: '2025-05-28', id: '456' },
-    { title: 'Fullstack Dev', date: '2025-04-10', id: '789' },
-    { title: 'Data Scientist', date: '2025-03-22', id: '101' },
-    { title: 'ML Engineer', date: '2025-02-15', id: '202' },
-     { title: 'ML Engineer', date: '2025-02-15', id: '203' },
-      { title: 'ML Engineer', date: '2025-02-15', id: '204' },
-       { title: 'ML Engineer', date: '2025-02-15', id: '205' },
-        { title: 'ML Engineer', date: '2025-02-15', id: '206' },
-  ];
+  const [recruiterEmail, setRecruiterEmail] = useState('');
+  const [interviews, setInterviews] = useState([]);
+
+  useEffect(() => {
+    const email = localStorage.getItem('recruiterEmail');
+    if (!email) {
+      console.warn('No recruiterEmail found in localStorage');
+      return;
+    }
+
+    setRecruiterEmail(email); // Store for welcome message
+
+    const fetchInterviews = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/interviews/${email}`);
+        const data = await response.json();
+
+        console.log('Fetched interview data:', data);
+
+        if (response.ok && Array.isArray(data.interviews)) {
+          setInterviews(data.interviews);
+        } else {
+          console.error('Error fetching interviews:', data);
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    };
+
+    fetchInterviews();
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -30,21 +50,22 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-400 p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-800">
-          Welcome back, Recruiter 👋
+          Welcome back! {recruiterEmail}
         </h1>
         <button
           className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-          onClick={() => navigate('/')}
+          onClick={() => {
+            localStorage.removeItem('recruiterEmail');
+            navigate('/');
+          }}
         >
           <LogOut size={16} className="inline mr-2" />
           Logout
         </button>
       </div>
 
-      {/* Create Interview Button */}
       <div className="flex justify-end mb-4">
         <button
           onClick={() => navigate('/recruiter/Createinterview')}
@@ -55,7 +76,6 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* Section Heading */}
       <div className="mb-4 flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800">Interview Roles</h2>
         <div className="space-x-2">
@@ -74,49 +94,41 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Horizontal Scrollable Cards */}
-      <div
-        ref={scrollRef}
-        className="flex space-x-4 overflow-x-auto pb-2"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {interviews.map((interview) => (
-          <div
-            key={interview.id}
-            className="min-w-[250px] bg-white p-5 rounded-xl shadow hover:shadow-lg transition flex-shrink-0"
-          >
-            <h3 className="text-lg font-semibold text-gray-800">{interview.title}</h3>
-            <p className="text-sm text-gray-500 mb-4">Created on {interview.date}</p>
-            <div className="flex justify-between">
-              <button
-                onClick={() => navigate(`/recruiter/Resultspage/${interview.id}`)}
-                className="text-blue-600 hover:underline text-sm"
-              >
-                View Results
-              </button>
-              <button
-                onClick={() =>
-                  navigator.clipboard.writeText(`https://yourapp.com/interview/${interview.id}`)
-                }
-                className="text-sm text-gray-600 hover:text-gray-800"
-              >
-                Copy Link
-              </button>
+      {interviews.length === 0 ? (
+        <p className="text-center text-gray-700 text-lg mt-8">
+          No Interviews Created Yet? Click on Create New Interview
+        </p>
+      ) : (
+        <div
+          ref={scrollRef}
+          className="flex space-x-4 overflow-x-auto pb-2"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {interviews.map((interview) => (
+            <div
+              key={interview.interview_id}
+              className="min-w-[250px] bg-white p-5 rounded-xl shadow hover:shadow-lg transition flex-shrink-0"
+            >
+              <h3 className="text-lg font-semibold text-gray-800">{interview.interview_title}</h3>
+              <p className="text-sm text-gray-600 mb-4 break-words">{interview.interview_link}</p>
+              <div className="flex justify-between">
+                <button
+                  onClick={() => navigate(`/recruiter/Resultspage/${interview.interview_id}`)}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  View Results
+                </button>
+                <button
+                  onClick={() => navigator.clipboard.writeText(interview.interview_link)}
+                  className="text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Copy Link
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Hide scrollbar (optional global CSS)
-      <style>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-        div {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style> */}
+          ))}
+        </div>
+      )}
     </div>
   );
 };
