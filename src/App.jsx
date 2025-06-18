@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Homepage';
 import Recruiterlogin from './pages/recruiter/Recruiterlogin';
-import Register from './pages/recruiter/Register';
+import RecruiterRegister from './pages/recruiter/Recruiterregister.jsx';
 import Dashboard from './pages/recruiter/Dashboard';
 import Resultspage from './pages/recruiter/Resultspage';
 import CreateInterview from './pages/recruiter/Createinterview';
@@ -14,7 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/recruiter/Recruiterlogin" element={<Recruiterlogin/>}/>
-        <Route path="/recruiter/register" element={<Register/>}/>
+        <Route path="/recruiter/RecruiterRegister" element={<RecruiterRegister/>}/>
         <Route path="/recruiter/Dashboard" element={<Dashboard/>}></Route>
         <Route path="/recruiter/Resultspage/:id" element={<Resultspage/>}></Route>
         <Route path="/recruiter/Createinterview" element={<CreateInterview/>}></Route>
