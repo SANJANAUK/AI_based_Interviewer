@@ -122,7 +122,7 @@ app.post("/createInterview", (req, res) => {
     }
 
     const interview_id = result.insertId;
-    const interview_link = `http://localhost:3000/interview/${interview_id}`;
+    const interview_link = `http://localhost:5173/interview/${interview_id}`;
 
     // Step 2: Update the interview with the generated link
     const updateQuery = `
@@ -202,6 +202,36 @@ app.get('/interviewDetails/:interview_id', (req, res) => {
       }
   });
 });
+
+// ✅ Check if candidate already appeared for interview
+app.post("/checkCandidate", (req, res) => {
+  const { candidate_email, interview_id } = req.body;
+
+  if (!candidate_email || !interview_id) {
+    return res.status(400).json({ error: "Missing email or interview ID" });
+  }
+
+  const query = `
+    SELECT * FROM candidate
+    WHERE candidate_email = ? AND interview_id = ?
+  `;
+
+  db.query(query, [candidate_email, interview_id], (err, results) => {
+    if (err) {
+      console.error("DB error:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    if (results.length > 0) {
+      // 🔒 Candidate already exists for this interview
+      return res.status(200).json({ exists: true });
+    }
+
+    // ✅ Candidate can proceed
+    res.status(200).json({ exists: false });
+  });
+});
+
 
 
 // Start server
