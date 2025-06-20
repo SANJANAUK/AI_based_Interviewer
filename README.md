@@ -1,11 +1,16 @@
 AI-Based Interviewer
+
 AI-Based Interviewer is a full-stack application designed to automate and evaluate candidate interviews using modern web technologies and AI.
 
 * Tech Stack
-Frontend: React + TailwindCSS 
+Frontend: React + TailwindCSS
+
 Backend: Node.js + Express
+
 Database: MySQL
+
 Authentication: Firebase Authentication (for secure candidate login via email verification)
+
 AI Evaluation: LLaMA 3.1 via Ollama, integrated using a Streamlit UI to interactively conduct and assess interviews
 
 * Candidate Workflow
