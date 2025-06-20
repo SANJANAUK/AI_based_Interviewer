@@ -1,12 +1,24 @@
-# React + Vite
+AI-Based Interviewer
+AI-Based Interviewer is a full-stack application designed to automate and evaluate candidate interviews using modern web technologies and AI.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+* Tech Stack
+Frontend: React + TailwindCSS 
+Backend: Node.js + Express
+Database: MySQL
+Authentication: Firebase Authentication (for secure candidate login via email verification)
+AI Evaluation: LLaMA 3.1 via Ollama, integrated using a Streamlit UI to interactively conduct and assess interviews
 
-Currently, two official plugins are available:
+* Candidate Workflow
+Candidate logs in via email verification (Gmail only)
+Receives rules and instructions
+Begins AI-driven interview (via Streamlit app)
+Answers are evaluated by the AI
+Results are stored and visible to the recruiter
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ * Recruiter Workflow
+Logs in via email
+Creates and manages interviews
+Monitors interview status and candidate performance
+Accepts or rejects candidates based on AI-evaluated scores
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
